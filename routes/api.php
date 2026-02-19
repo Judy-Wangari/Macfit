@@ -37,8 +37,8 @@ Route::delete('/deleteGym/{id}', [GymController::class, 'deleteGym']);
 
 Route::post('/saveBundle', [BundleController::class, 'createBundle']);
 Route::get('/getBundles', [BundleController::class, 'readAllBundles']);
-Route::get('/getBundle/{id}', [BundleController::class, 'BundleGym']);
-Route::post('/updateBundle/{id}', [BundleController::class, 'BundleGym']);
-Route::delete('/deleteBundle/{id}', [BundleController::class, 'bundleGym']);
+Route::get('/getBundle/{id}', [BundleController::class, 'getBundle']);
+Route::post('/updateBundle/{id}', [BundleController::class, 'updateBundle']);
+Route::delete('/deleteBundle/{id}', [BundleController::class, 'deletebundle']);
 
 
