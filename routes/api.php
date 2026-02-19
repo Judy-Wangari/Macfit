@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BundleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,9 +12,15 @@ use App\Http\Controllers\GymController;
 use App\Models\Category;
 use App\Models\Equipment;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+//Public Routes
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+//Protected Routes
+
+Route::middleware('auth:sanctum')->group(function () {
+
 
 Route::post('/saveRole', [RoleController::class, 'createRole']);
 Route::get('/getRoles', [RoleController::class, 'readAllRoles']);
@@ -39,13 +46,16 @@ Route::delete('/deleteGym/{id}', [GymController::class, 'deleteGym']);
 
 Route::post('/saveBundle', [BundleController::class, 'createBundle']);
 Route::get('/getBundles', [BundleController::class, 'readAllBundles']);
-Route::get('/getBundle/{id}', [BundleController::class, 'getBundle']);
+Route::get('/getBundle/{id}', [BundleController::class, 'readBundle']);
 Route::post('/updateBundle/{id}', [BundleController::class, 'updateBundle']);
 Route::delete('/deleteBundle/{id}', [BundleController::class, 'deletebundle']);
 
 
 Route::post('/saveEquipment', [EquipmentController::class, 'createEquipment']);
 Route::get('/getEquipment', [EquipmentController::class, 'readAllEquipment']);
-Route::get('/getEquipment/{id}', [EquipmentController::class, 'getEquipment']);
+Route::get('/getEquipment/{id}', [EquipmentController::class, 'readEquipment']);
 Route::post('/updateEquipment/{id}', [EquipmentController::class, 'updateEquipment']);
 Route::delete('/deleteEquipment/{id}', [EquipmentController::class, 'deleteEquipment']);
+
+
+});
