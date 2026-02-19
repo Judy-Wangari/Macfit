@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\GymController;
 use App\Models\Category;
+use App\Models\Equipment;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -42,3 +44,8 @@ Route::post('/updateBundle/{id}', [BundleController::class, 'updateBundle']);
 Route::delete('/deleteBundle/{id}', [BundleController::class, 'deletebundle']);
 
 
+Route::post('/saveEquipment', [EquipmentController::class, 'createEquipment']);
+Route::get('/getEquipment', [EquipmentController::class, 'readAllEquipment']);
+Route::get('/getEquipment/{id}', [EquipmentController::class, 'getEquipment']);
+Route::post('/updateEquipment/{id}', [EquipmentController::class, 'updateEquipment']);
+Route::delete('/deleteEquipment/{id}', [EquipmentController::class, 'deleteEquipment']);

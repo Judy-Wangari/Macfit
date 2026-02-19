@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Equipment extends Model
 {
-    //
+     protected $fillable =[
+        'name',
+        'model_no',
+        'usage',
+        'status',
+        'value'
+    ];
 }
