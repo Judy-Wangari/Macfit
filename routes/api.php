@@ -9,6 +9,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\GymController;
+use App\Http\Controllers\SubscriptionController;
 use App\Models\Category;
 use App\Models\Equipment;
 
@@ -56,6 +57,13 @@ Route::get('/getEquipment', [EquipmentController::class, 'readAllEquipment']);
 Route::get('/getEquipment/{id}', [EquipmentController::class, 'readEquipment']);
 Route::post('/updateEquipment/{id}', [EquipmentController::class, 'updateEquipment']);
 Route::delete('/deleteEquipment/{id}', [EquipmentController::class, 'deleteEquipment']);
+
+
+Route::post('/saveSubscription', [SubscriptionController::class, 'createSubscription']);
+Route::get('/getSubscriptions', [SubscriptionController::class, 'readAllSubscriptions']);
+Route::get('/getSubscription/{id}', [SubscriptionController::class, 'readSubscription']);
+Route::post('/updateSubscription/{id}', [SubscriptionController::class, 'updateSubscription']);
+Route::delete('/deleteSubscription/{id}', [SubscriptionController::class, 'deleteSubscription']);
 
 
 });
