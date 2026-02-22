@@ -75,8 +75,8 @@ public function readSubscription($id){
 
 public function updateSubscription(Request $request, $id){
       $validated = $request->validate([
-        'user_id'=>'integer|exists:categories,id',
-        'bundle_id'=>'integer|exists:categories,id'
+        'user_id'=>'integer|exists:users,id',
+        'bundle_id'=>'integer|exists:bundles,id'
        ]);
 
 
