@@ -43,7 +43,7 @@ class EquipmentController extends Controller
         }
         catch(\Exception $exception){
             return response()->json([
-                'error'=>'Failed to fetch Equipments.',
+                'error'=>'Failed to fetch Equipment.',
                 'message'=>$exception->getMessage()
             ]);
         }

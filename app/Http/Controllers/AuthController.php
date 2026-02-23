@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
 
@@ -19,12 +21,17 @@ class AuthController extends Controller
             'user_image'=>'nullable|image|mimes:jpeg,png,jpg'
         ]);
 
-        $role = Role::where('name', 'User')->first();
+        if($request->role_id){
+            $role_id = $request->role_id;
+              } else{
+              $role = Role::where('name', 'User')->first();
+              $role_id = $role->id;
+        }
 
         $user = new User();
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        $user->role_id = $role->id;
+        $user->role_id = $role_id;
         $user->password = Hash::make($validated['password']);
 
 
@@ -38,16 +45,32 @@ class AuthController extends Controller
 
        try{
         $user->save();
-        return response()->json($user);
-       }
+
+        
+        $signedUrl = URL::temporarySignedRoute(
+          'verification.verify',
+          now()->addMinutes(60),
+          [
+            'id'=>$user->id,
+            'hash'=>sha1($user->email)
+          ]
+    );
+
+    $user->notify(new VerifyEmailNotification($signedUrl));
+
+    return response()->json([
+        'message'=>'Verification Email resent successfully.'
+    ], 200);
+  
+  }  
        catch(\Exception $exception){
         return response()->json([
             'error'=>"Registration Failed!",
             'messsage'=>$exception->getMessage()
         ]);
        }
-
-    }
+}
+    
     public function login(Request $request){
           $validated = $request->validate([
             'email'=>'required|email',
@@ -59,6 +82,12 @@ class AuthController extends Controller
         if(!$user || !Hash::check($validated ['password'], $user->password))
             throw ValidationException::withMessages ([
             'Error'=>'Invalid Credentials'], 401);
+
+ if(!$user->is_active){
+    return response()->json([
+        'message'=>'Your account is not Active Please Verify Your Email Address'
+    ],403);
+ }
 
             $token = $user->createToken("auth-token")->plainTextToken;
 
