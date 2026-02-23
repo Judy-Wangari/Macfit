@@ -70,7 +70,7 @@ public function updateRole(Request $request, $id){
         }
         catch(\Exception $exception){
             return response()->json([
-                'error'=>'Failed to save Role',
+                'error'=>'Failed to Find Role',
                 'message'=>$exception->getMessage()
             ]);
         }
