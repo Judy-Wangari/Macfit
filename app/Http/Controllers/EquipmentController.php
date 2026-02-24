@@ -13,7 +13,7 @@ class EquipmentController extends Controller
         'model_no'=>'required|string|unique:equipment,model_no',
         'usage'=>'required|string',
         'value'=>'required|numeric',
-        'status'=>'required|in:available,in_use,maintenance,broken,retired'
+        'status'=>'required|in:available,in_use,maintenance,broken,retired',
        
        ]);
 

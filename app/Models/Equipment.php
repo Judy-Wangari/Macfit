@@ -11,6 +11,6 @@ class Equipment extends Model
         'model_no',
         'usage',
         'status',
-        'value'
+        'value',
     ];
 }

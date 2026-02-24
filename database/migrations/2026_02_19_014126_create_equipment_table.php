@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('model_no')->unique();
             $table->string('name');
-            $table->text('usage');
+            $table->text('usage', 1000);
             $table->decimal('value' , 8 ,2 );
             $table->enum('status' ,['available', 'in_use', 'maintenance', 'broken' , 'retired'])->default('available');
             $table->timestamps();

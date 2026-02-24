@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 
 class RoleController extends Controller
 {
@@ -38,10 +38,10 @@ class RoleController extends Controller
             return response()->json([
                 'error'=>'Failed to fetch Roles.',
                 'message'=>$exception->getMessage()
-            ]);
+            ], 200);
         }
     }
-public function readRole($id){
+public function readRole($id){ 
     try{
         $role = Role::findOrFail($id);
         return response()->json($role);
