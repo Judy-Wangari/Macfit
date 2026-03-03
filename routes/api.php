@@ -11,17 +11,23 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\GymController;
 use App\Http\Controllers\ResendEmailVerificationController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UserOtpController;
 use App\Http\Controllers\VerifyEmailController;
 use App\Models\Category;
 use App\Models\Equipment;
 
 //Public Routes
 
+Route::get('/getRoles', [RoleController::class, 'readAllRoles']);
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/verify-otp', [UserOtpController::class, 'verifyOtp']);
+
+
 
 //Email Verification
-Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyEmail'])
     ->name('verification.verify')
     ->middleware(['signed', 'throttle:6,1']);
 
@@ -33,10 +39,11 @@ Route::post('/email/resend', [ResendEmailVerificationController::class, 'resend'
 
 Route::middleware('auth:sanctum')->group(function () {
 
+Route::get('/userInfo', [AuthController::class, 'userInfo']);
 Route::post('/logout',[AuthController::class, 'logout']);
 
 Route::post('/saveRole', [RoleController::class, 'createRole']);
-Route::get('/getRoles', [RoleController::class, 'readAllRoles']);
+//removed /getRoles from here to public Routes.
 Route::get('/getRole/{id}', [RoleController::class, 'readRole']);
 Route::post('/updateRole/{id}', [RoleController::class, 'updateRole']);
 Route::delete('/deleteRole/{id}', [RoleController::class, 'deleteRole']);
@@ -76,6 +83,8 @@ Route::get('/getSubscriptions', [SubscriptionController::class, 'readAllSubscrip
 Route::get('/getSubscription/{id}', [SubscriptionController::class, 'readSubscription']);
 Route::post('/updateSubscription/{id}', [SubscriptionController::class, 'updateSubscription']);
 Route::delete('/deleteSubscription/{id}', [SubscriptionController::class, 'deleteSubscription']);
+
+Route::get('/userCharges', [SubscriptionController::class, 'getUserCharges']);
 
 
 });

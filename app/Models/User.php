@@ -26,8 +26,9 @@ class User extends Authenticatable
         'email',
         'password',
 
-        'is_active',
+        
         'user_image',
+        'is_active',
         'role_id'
 
     ];
@@ -50,20 +51,14 @@ class User extends Authenticatable
     protected  $casts = [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_active'=>'boolean'
+            // 'is_active'=>'boolean',
         ];
 
     public function role(){
     return $this->belongsTo(Role::class);
     }
 
-    public function abilities(){
-        return [
-            'admin' =>$this->role->id === 1,
-            'trainer' =>$this->role->id === 2,
-            'user' =>$this->role->id === 3,
-            'staff' =>$this->role->id === 4,
-
-        ];
+     public function isAdmin(){
+        return $this->role_id === 1;
     }
 }

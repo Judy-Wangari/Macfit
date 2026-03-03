@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Mail\OtpMail;
+// use App\Models\Role;
 use App\Models\User;
+use App\Models\UserOtp;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
@@ -18,23 +21,25 @@ class AuthController extends Controller
             'name'=>'required|string|max:40',
             'email'=>'required|email|unique:users,email',
             'password'=>'required|string|min:4|max:15|confirmed',
-            'user_image'=>'nullable|image|mimes:jpeg,png,jpg'
+            'user_image'=>'nullable|image|mimes:jpeg,png,jpg',
+            'role_id'=>'required|integer|exists:roles,id',
         ]);
 
-        if($request->role_id){
-            $role_id = $request->role_id;
-              } else{
-              $role = Role::where('name', 'User')->first();
-              $role_id = $role->id;
-        }
+        // if($request->role_id){
+        //     $role_id = $request->role_id;
+        //       } else{
+        //       $role = Role::where('name', 'User')->first();
+        //       $role_id = $role->id;
+        // }
 
         $user = new User();
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        $user->role_id = $role_id;
         $user->password = Hash::make($validated['password']);
-
-
+        $user->role_id = $validated['role_id'];
+        
+         
+       
         if($request->hasFile('user_image')){
             $filename = $request->file('user_image')->store('users' ,'public');
               }
@@ -79,28 +84,38 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        if(!$user || !Hash::check($validated ['password'], $user->password))
+        if(!$user || !Hash::check($validated ['password'], $user->password)){
             throw ValidationException::withMessages ([
-            'Error'=>'Invalid Credentials'], 401);
+            'error'=>'Invalid Credentials'], 401);
+        }
 
  if(!$user->is_active){
     return response()->json([
         'message'=>'Your account is not Active Please Verify Your Email Address'
     ],403);
  }
+            $otp = rand(100000, 999999);
+            $expiresAt = now()->addMinutes(5);
 
-            $token = $user->createToken("auth-token")->plainTextToken;
+            UserOtp::updateOrCreate([
+                'user_id'=>$user->id,
+                'otp'=>$otp,
+                'expires_at'=>$expiresAt,
+            ]);
+
+            Mail::to($user->email)->send(new OtpMail($otp));
 
             return response()->json([
-                'message'=>'Login Successful!',
-                'token'=>$token,
-                'user'=>$user,
-                'abilities'=>$user->abilities(),
+                'message'=>'OTP  Sent to your email. Please verify to complete login',
             ], 201);
     }
 
     public function logout(Request $request){
         $request->user()->currentAccessToken()->delete();
         return response()->json('Logout Successful.');
+    }
+
+    public function userInfo(){
+        return response()->json(auth()->user());
     }
 }

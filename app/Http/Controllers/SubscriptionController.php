@@ -9,18 +9,21 @@ class SubscriptionController extends Controller
 {
      public function createSubscription(Request $request){
        $validated = $request->validate([
-        'user_id'=>'integer|exists:users,id',
-        'bundle_id'=>'integer|exists:bundles,id'
+        'bundle_id'=>'required|integer|exists:bundles,id'
        ]);
 
+       $userId = auth()->user()->id;
+
        $subscription = new Subscription();
-       $subscription->user_id = $validated['user_id'];
+       $subscription->user_id = $userId;
        $subscription->bundle_id = $validated['bundle_id'];
 
 
         try{
              $subscription->save();
-             return response()->json($subscription);
+              return response()->json([
+                'message'=>'Subscription Saved Successfully.'
+            ], 200);
         }
         catch(\Exception $exception){
             return response()->json([
@@ -35,8 +38,7 @@ class SubscriptionController extends Controller
             // $subscriptions =Subscription::all();
             $subscriptions = Subscription::join('users', 'subscriptions.user_id','=', 'users.id')
                              ->join('bundles', 'subscriptions.bundle_id','=', 'bundles.id')
-                             ->select('subscriptions.*', 
-                             'users.name as user_name',
+                             ->select('subscriptions.*', 'bundles.value as bundle_value', 'users.name as user_name',
                              'bundles.name as bundle_name') 
                              ->get();
 
@@ -54,8 +56,7 @@ public function readSubscription($id){
         // $subscription = Subscription::findOrFail($id);
           $subscription =  Subscription::join('users', 'subscriptions.user_id','=', 'users.id')
                              ->join('bundles', 'subscriptions.bundle_id','=', 'bundles.id')
-                             ->select('subscriptions.*', 
-                             'users.name as user_name',
+                             ->select('subscriptions.*', 'bundles.value as bundle_value', 'users.name as user_name',
                              'bundles.name as bundle_name')  
                              ->where('subscriptions.id', $id)
                              ->first();
@@ -111,5 +112,21 @@ public function updateSubscription(Request $request, $id){
         }
 
     }
+
+     public function getUserCharges(){
+        $user = auth()->user();
+        $userId = $user->id;
+
+        $userCharge = Subscription::where('user_id', $userId)
+                        ->join('users', 'subscriptions.user_id', '=', 'users.id')
+                        ->join('bundles', 'subscriptions.bundle_id', '=', 'bundles.id')
+                        ->sum('bundles.value');
+        return response()->json([
+            'user'=>$user->name,
+            'total_charge'=>$userCharge,
+        ], 200);
+    }
 }
+
+
 

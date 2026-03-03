@@ -13,7 +13,8 @@ class BundleController extends Controller
         'start_time'=>'required',
         'duration'=>'required',
         'description'=>'string|max:1000',
-        'category_id'=>'integer|exists:categories,id'
+        'value'=>'required|numeric',
+        'category_id'=>'integer|exists:categories,id',
        ]);
 
        $bundle = new Bundle();
@@ -21,6 +22,7 @@ class BundleController extends Controller
        $bundle->start_time = $validated['start_time'];
        $bundle->duration = $validated['duration'];
        $bundle->description = $validated['description'];
+       $bundle->value = $validated['value'];
        $bundle->category_id = $validated['category_id'];
 
 
@@ -75,7 +77,8 @@ public function updateBundle(Request $request, $id){
         'start_time'=>'required',
         'duration'=>'required',
         'description'=>'string|max:1000',
-        'category_id'=>'integer|exists:categories,id'
+        'value'=>'required|numeric',
+        'category_id'=>'integer|exists:categories,id',
        ]);
 
 
@@ -85,6 +88,7 @@ public function updateBundle(Request $request, $id){
          $bundle->start_time = $validated['start_time'];
          $bundle->duration = $validated['duration'];
          $bundle->description = $validated['description'];
+         $bundle->value = $validated['value'];
          $bundle->category_id = $validated['category_id'];
          $bundle->save();
         return response()->json($bundle);

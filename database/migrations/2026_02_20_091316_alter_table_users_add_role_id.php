@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_active')->nullable();
             $table->string('user_image')->nullable();
+            $table->boolean('is_active')->nullable();
             $table->unsignedBigInteger('role_id');
 
 
@@ -29,11 +29,9 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
 
-            $table->dropColumn('is_active');
             $table->dropColumn('user_image');
+            $table->dropColumn('is_active');
             $table->dropColumn('role_id');
-
-           
         });
     }
 };
