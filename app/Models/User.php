@@ -29,7 +29,15 @@ class User extends Authenticatable
         
         'user_image',
         'is_active',
-        'role_id'
+        'role_id',
+        'phoneNumber',
+        'gymLocation',
+        'gender',
+        'dob',
+
+
+
+
 
     ];
 

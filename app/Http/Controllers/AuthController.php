@@ -20,9 +20,13 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name'=>'required|string|max:40',
             'email'=>'required|email|unique:users,email',
-            'password'=>'required|string|min:4|max:15|confirmed',
+            'password'=>'required|string|min:4|max:15',
             'user_image'=>'nullable|image|mimes:jpeg,png,jpg',
             'role_id'=>'required|integer|exists:roles,id',
+            'phoneNumber'=>'nullable|string',
+            'gender'=>'nullable|string',
+            'dob'=>'nullable|string',
+            'gymLocation'=>'nullable|string',
         ]);
 
         // if($request->role_id){
@@ -37,6 +41,11 @@ class AuthController extends Controller
         $user->email = $validated['email'];
         $user->password = Hash::make($validated['password']);
         $user->role_id = $validated['role_id'];
+        $user->phoneNumber = $validated['phoneNumber'];
+        $user->gender = $validated['gender'];
+        $user->dob = $validated['dob'];
+        $user->gymLocation = $validated['gymLocation'];
+        $user->is_active = true; //to delete later
         
          
        
@@ -52,27 +61,34 @@ class AuthController extends Controller
         $user->save();
 
         
-        $signedUrl = URL::temporarySignedRoute(
-          'verification.verify',
-          now()->addMinutes(60),
-          [
-            'id'=>$user->id,
-            'hash'=>sha1($user->email)
-          ]
-    );
+    //     $signedUrl = URL::temporarySignedRoute(
+    //       'verification.verify',
+    //       now()->addMinutes(60),
+    //       [
+    //         'id'=>$user->id,
+    //         'hash'=>sha1($user->email)
+    //       ]
+    // );
 
-    $user->notify(new VerifyEmailNotification($signedUrl));
+    // $user->notify(new VerifyEmailNotification($signedUrl));
 
-    return response()->json([
-        'message'=>'Verification Email resent successfully.'
-    ], 200);
+    // return response()->json([
+    //     'message'=>'Verification Email resent successfully.'
+    // ], 200);
+
+     $token = $user->createToken('auth-token')->plainTextToken;
+            return response()->json([
+                'message'=> 'Registration Successful!',
+                'user' => $user,
+                'token' => $token,
+            ], 201);
   
   }  
        catch(\Exception $exception){
         return response()->json([
             'error'=>"Registration Failed!",
             'messsage'=>$exception->getMessage()
-        ]);
+        ], 500);
        }
 }
     
@@ -94,19 +110,26 @@ class AuthController extends Controller
         'message'=>'Your account is not Active Please Verify Your Email Address'
     ],403);
  }
-            $otp = rand(100000, 999999);
-            $expiresAt = now()->addMinutes(5);
+            // $otp = rand(100000, 999999);
+            // $expiresAt = now()->addMinutes(5);
 
-            UserOtp::updateOrCreate([
-                'user_id'=>$user->id,
-                'otp'=>$otp,
-                'expires_at'=>$expiresAt,
-            ]);
+            // UserOtp::updateOrCreate([
+            //     'user_id'=>$user->id,
+            //     'otp'=>$otp,
+            //     'expires_at'=>$expiresAt,
+            // ]);
 
-            Mail::to($user->email)->send(new OtpMail($otp));
+            // Mail::to($user->email)->send(new OtpMail($otp));
 
+            // return response()->json([
+            //     'message'=>'OTP  Sent to your email. Please verify to complete login',
+            // ], 201);
+
+            $token = $user->createToken('auth-token')->plainTextToken;
             return response()->json([
-                'message'=>'OTP  Sent to your email. Please verify to complete login',
+                'message'=> 'Registration Successful!',
+                'user' => $user,
+                'token' => $token,
             ], 201);
     }
 
