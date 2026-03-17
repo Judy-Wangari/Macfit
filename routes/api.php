@@ -13,6 +13,7 @@ use App\Http\Controllers\ResendEmailVerificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserOtpController;
 use App\Http\Controllers\VerifyEmailController;
+use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Equipment;
 
@@ -86,5 +87,6 @@ Route::delete('/deleteSubscription/{id}', [SubscriptionController::class, 'delet
 
 Route::get('/userCharges', [SubscriptionController::class, 'getUserCharges']);
 
+Route::resource('users', UserController::class);
 
 });
